@@ -1,5 +1,4 @@
-
-
+let carrito=[];
 
 let stockProductos=[{
     id: 1,
@@ -9,7 +8,6 @@ let stockProductos=[{
     precio: 2500,
     imagen: './img/oferta1.jpg',
     descripcion_corta: 'helado de crema y oreo de 1 kilo',
-    descripcion: 'la mejor combinacion de de galletitas oreo y crema americana'
 }, {
     id: 2,
     peso:'1kg',
@@ -18,7 +16,6 @@ let stockProductos=[{
     precio: 2000,
     imagen: './img/oferta2.jpg',
     descripcion_corta: 'helado cofler de 1 kilo',
-    descripcion: 'Heladera Side By Side. Cap.bruta 584L/neta 527L. Color Acero Inoxidable. Controles externos c/display Digital. Fabricadora de Hielo. Alarma de puerta abierta. Luz LED. Estantes de vidrio. Modo vacaciones. EE: A+.'
 },{
     id: 3,
     peso:'1kg',
@@ -27,7 +24,6 @@ let stockProductos=[{
     precio: 1850,
     imagen: './img/oferta3.jpg',
     descripcion_corta: 'helado cofler de 1 kilo',
-    descripcion: 'Split PRIA EVOLUTION. Frio-calor de 3001frigorias. 4 capacidades de Frio-calor. Display. Selector de Temperaturas. Eficiencia Energetica: Refrigeracion: A / Calefaccion: C.'
 
 }
 ,{
@@ -38,7 +34,6 @@ let stockProductos=[{
     precio: 2000,
     imagen: './img/oferta4.jpg',
     descripcion_corta: 'helado coffee de 1 kilo',
-    descripcion: 'Split PRIA EVOLUTION. Frio-calor de 3001frigorias. 4 capacidades de Frio-calor. Display. Selector de Temperaturas. Eficiencia Energetica: Refrigeracion: A / Calefaccion: C.'
 
 }
 ,{
@@ -49,7 +44,6 @@ let stockProductos=[{
     precio: 1850,
     imagen: './img/oferta5.jpg',
     descripcion_corta: 'helado de galletas de chocolate 1 kilo',
-    descripcion: 'Split PRIA EVOLUTION. Frio-calor de 3001frigorias. 4 capacidades de Frio-calor. Display. Selector de Temperaturas. Eficiencia Energetica: Refrigeracion: A / Calefaccion: C.'
 
 }
 ,{
@@ -60,7 +54,6 @@ let stockProductos=[{
     precio: 1900,
     imagen: './img/oferta6.jpg',
     descripcion_corta: 'helado nestle de galleta de chocolate de 1 kilo',
-    descripcion: 'Split PRIA EVOLUTION. Frio-calor de 3001frigorias. 4 capacidades de Frio-calor. Display. Selector de Temperaturas. Eficiencia Energetica: Refrigeracion: A / Calefaccion: C.'
 
 },
 {
@@ -71,7 +64,6 @@ let stockProductos=[{
     precio: 1900,
     imagen: './img/oferta6.jpg',
     descripcion_corta: 'helado nestle de galleta de chocolate de 1 kilo',
-    descripcion: 'Split PRIA EVOLUTION. Frio-calor de 3001frigorias. 4 capacidades de Frio-calor. Display. Selector de Temperaturas. Eficiencia Energetica: Refrigeracion: A / Calefaccion: C.'
 
 },
 {
@@ -81,14 +73,35 @@ let stockProductos=[{
     codigo: '1964785',
     precio: 1900,
     imagen: './img/oferta1.jpg',
-    descripcion_corta: 'helado nestle de galleta de chocolate de 1 kilo',
-    descripcion: 'Split PRIA EVOLUTION. Frio-calor de 3001frigorias. 4 capacidades de Frio-calor. Display. Selector de Temperaturas. Eficiencia Energetica: Refrigeracion: A / Calefaccion: C.'
 
 }];
 const contenedorProductos=document.getElementById('contenedor-productos')
-let carrito=[];
 const contenedorCarrito= document.getElementById('contadorCarrito');
+const botonVaciar=document.getElementById('vaciar-carrito')
+const contadorCarrito=document.getElementById('contadorCarrito')
+const precioTotal=document.getElementById('precioTotal')
 
+
+
+const contenedorModal = document.getElementsByClassName('modal-contenedor')[0]
+const botonAbrir = document.getElementById('boton-carrito')
+const botonCerrar = document.getElementById('carritoCerrar')
+const modalCarrito = document.getElementsByClassName('modal-carrito')[0]
+
+
+
+document.addEventListener('DOMContentLoaded',()=>{
+    if(localStorage.getItem('carrito')){
+        carrito=JSON.parse(localStorage.getItem('carrito'))
+        actualizarCarrito()
+    }
+})
+
+
+botonVaciar.addEventListener('click',()=>{
+    carrito.length=0;
+    actualizarCarrito()
+})
 
 stockProductos.forEach((producto)=>{
     const div=document.createElement('div')
@@ -110,6 +123,28 @@ stockProductos.forEach((producto)=>{
     })
 })
 
+
+
+
+
+botonAbrir.addEventListener('click', ()=>{
+    contenedorModal.classList.toggle('modal-active')
+})
+botonCerrar.addEventListener('click', ()=>{
+    contenedorModal.classList.toggle('modal-active')
+})
+
+contenedorModal.addEventListener('click', (event) =>{
+    contenedorModal.classList.toggle('modal-active')
+
+})
+modalCarrito.addEventListener('click', (event) => {
+    event.stopPropagation() 
+})
+
+
+
+
 const agregarAlCarrito=(prodId)=>{
     const item=stockProductos.find((prod)=> prod.id===prodId)
     carrito.push(item)
@@ -117,7 +152,20 @@ const agregarAlCarrito=(prodId)=>{
     console.log(carrito)
 }
 
+
+const eliminarDelCarrito=(prodId)=>{
+    const item=carrito.find((prof)=> prod.id===prodId)
+
+    const indice=carrito.indexOf(item)
+    carrito.splice(indice,1)
+    actualizarCarrito()
+}
+
+
 const actualizarCarrito=()=>{
+
+    contenedorCarrito.innerHTML=""
+
 
     carrito.forEach((prod)=>{
         const div=document.createElement('div')
@@ -129,6 +177,7 @@ const actualizarCarrito=()=>{
         <button onclick="eliminarDelCarrito(${prod.id})" class="boton-eliminar"><i class="fas fa-trash-alt"></i>
         `
         contenedorCarrito.appendChild(div)
+        localStorage.setItem('carrito',JSON.stringify(carrito))
     })
-
+    contadorCarrito.innerText=carrito.length
 }
